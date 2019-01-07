@@ -54,10 +54,10 @@ def city_game(bot, update):
         user_past_letter = utils.client_past_letter(user_answer)
         update.message.reply_text(("Мне на букву {0}.").format(user_past_letter))
         bot_answer = utils.programm_answer(chat_id, user_past_letter)
-        if bot_answer != False:
+        if bot_answer != "":
             update.message.reply_text(("Мой ответ {0}.").format(bot_answer))
             bot_past_letter = utils.programm_past_letter(chat_id, bot_answer)
-            update.message.reply_text(("Тебе на букву {1}").format(bot_past_letter))
+            update.message.reply_text(("Тебе на букву {0}").format(bot_past_letter))
         else:
             update.message.reply_text("Поздравляю с победой!")
     else:

@@ -103,13 +103,13 @@ def programm_answer(chat_id, user_past_letter):
     param user_past_letter: последняя буква города пользователя
     return: город программы
     """
+    bot_answer = ""
     with shelve.open("shelve_players") as storage:
         user_list = storage[str(chat_id)]
-        for bot_answer in user_list:
-            if bot_answer[0] == user_past_letter:
-                user_list.remove(bot_answer)
+        for bot_answer_for_cycle in user_list:
+            if bot_answer_for_cycle[0] == user_past_letter:
+                user_list.remove(bot_answer_for_cycle)
                 storage[str(chat_id)] = user_list
+                bot_answer = bot_answer_for_cycle
                 return bot_answer
-            else:
-                return False
-
+    return bot_answer
