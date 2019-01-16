@@ -1,12 +1,9 @@
 import shelve
-import random
 
 import settings
 
 
-def set_user_game(
-    chat_id, RUSSIAN_CITY_LIST=random.sample(settings.RUSSIAN_CITY_LIST, 1097)
-):
+def set_user_game(chat_id, RUSSIAN_CITY_LIST):
     """
     Записываем юзера в игроки и даем ему список городов.
     param chat_id: id юзера
