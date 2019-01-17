@@ -11,9 +11,7 @@ def new_game(bot, update):
     создаем базу городов и базу последней буквы.
     """
     chat_id = update.message.chat_id
-    text = """Привет! Сыграем в города? Немного поясню правила: 
-    города только России, в случае написания города в несколько слов, 
-    пиши слитно, пожалуй все, удачи!"""
+    text = """Поехали!"""
     RUSSIAN_CITY_LIST = sample(cities_base.RUSSIAN_CITY_LIST, 1097)
     start_keyboard = ReplyKeyboardMarkup([["Начать новую игру"]], resize_keyboard=True)
     update.message.reply_text(text, reply_markup=start_keyboard)
@@ -45,3 +43,11 @@ def city_game(bot, update):
             update.message.reply_text("Поздравляю с победой!")
     else:
         update.message.reply_text("Твой ответ не принимается, попробуй снова.")
+
+
+def start(bot, update):
+    text = """Привет! Сыграем в города? Немного поясню правила: 
+    города только России, в случае написания города в несколько слов, 
+    пиши слитно, пожалуй все, удачи!"""
+    start_keyboard = ReplyKeyboardMarkup([["Начать новую игру"]], resize_keyboard=True)
+    update.message.reply_text(text, reply_markup=start_keyboard)

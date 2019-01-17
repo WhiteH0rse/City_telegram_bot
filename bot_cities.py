@@ -5,7 +5,7 @@ import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, RegexHandler
 
 import settings
-from handlers import new_game, city_game
+from handlers import new_game, city_game, start
 
 logging.basicConfig(
     format="%(name)s - %(levelname)s - %(message)s",
@@ -19,6 +19,7 @@ def main():
 
     dp = mybot.dispatcher
     dp.add_handler(RegexHandler("^(Начать новую игру)$", new_game))
+    dp.add_handler(CommandHandler("start", start))
     dp.add_handler(MessageHandler(Filters.text, city_game))
 
     mybot.start_polling()
