@@ -20,7 +20,6 @@ def new_game(bot, update):
     except KeyError:
         pass
     utils.set_user_game(chat_id, RUSSIAN_CITY_LIST)
-    utils.set_bot_past_letter_for_game(chat_id)
 
 
 def city_game(bot, update):
@@ -28,9 +27,8 @@ def city_game(bot, update):
     Играем в города.
     """
     chat_id = update.message.chat_id
-    user_city = update.message.text.upper()
-    update.message.reply_text(("Ты назвал город: {0}").format(user_city))
-    user_answer = user_city
+    user_answer = update.message.text.upper()
+    update.message.reply_text(("Ты назвал город: {0}").format(user_answer))
     implement_get_next_user_answer = utils.get_next_user_answer(chat_id, user_answer)
     if implement_get_next_user_answer == True:
         user_past_letter = utils.client_past_letter(user_answer)

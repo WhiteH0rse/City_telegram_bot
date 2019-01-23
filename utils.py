@@ -3,24 +3,19 @@ import shelve
 import settings
 
 
-def set_user_game(chat_id, RUSSIAN_CITY_LIST):
+def set_user_game(chat_id, RUSSIAN_CITY_LIST, bot_past_letter=""):
     """
     Записываем юзера в игроки и даем ему список городов.
-    param chat_id: id юзера
-    param RUSSIAN_CITY_LIST: список городов для конкретного пользователя
-    """
-    with shelve.open("shelve_players") as storage:
-        storage[str(chat_id)] = RUSSIAN_CITY_LIST
-
-
-def set_bot_past_letter_for_game(chat_id, bot_past_letter=settings.bot_past_letter):
-    """
     Создаем в базе значение последней буквы конкретному пользователю.
     param chat_id: id юзера
+    param RUSSIAN_CITY_LIST: список городов для конкретного пользователя
     param bot_past_letter: последняя буква на которую пользователю называть город
     """
-    with shelve.open("shelve_players_letters") as storage:
-        storage[str(chat_id)] = bot_past_letter
+    with shelve.open("shelve_players") as storage:
+        storage[str(chat_id)] = {
+            "bot_past_letter": bot_past_letter,
+            "city_dictionary": RUSSIAN_CITY_LIST,
+        }
 
 
 def finish_user_game(chat_id):
@@ -29,8 +24,6 @@ def finish_user_game(chat_id):
     param chat_id: id юзера
     """
     with shelve.open("shelve_players") as storage:
-        del storage[str(chat_id)]
-    with shelve.open("shelve_players_letters") as storage:
         del storage[str(chat_id)]
 
 
@@ -42,17 +35,14 @@ def get_next_user_answer(chat_id, user_answer):
     param user_answer: город пользователя
     return: сообщение об ошибке
     """
-    bot_past_letter = ""
-    with shelve.open("shelve_players_letters") as storage:
-        bot_past_letter = storage[str(chat_id)]
-
     with shelve.open("shelve_players") as storage:
-        user_list = storage[str(chat_id)]
-        if (user_answer in user_list and user_answer[0] == bot_past_letter) or (
-            user_answer in user_list and bot_past_letter == ""
+        bot_past_letter = storage[str(chat_id)]["bot_past_letter"]
+        db_shelve = storage[str(chat_id)]
+        if (user_answer in db_shelve["city_dictionary"]) and (
+            user_answer[0] == bot_past_letter or bot_past_letter == ""
         ):
-            user_list.remove(user_answer)
-            storage[str(chat_id)] = user_list
+            db_shelve["city_dictionary"].remove(user_answer)
+            storage[str(chat_id)] = db_shelve
             return True
         else:
             return False
@@ -65,13 +55,9 @@ def client_past_letter(user_answer):
     return user_past_letter: последняя буква в городе пользователя 
     """
     user_past_letter = user_answer[-1]
-    if user_past_letter == "Ы" or user_past_letter == "Й" or user_past_letter == "Ь":
+    if user_past_letter in ("Ы", "Й", "Ь"):
         user_past_letter = user_answer[-2]
-        if (
-            user_past_letter == "Ы"
-            or user_past_letter == "Й"
-            or user_past_letter == "Ь"
-        ):
+        if user_past_letter in ("Ы", "Й", "Ь"):
             user_past_letter = user_answer[-3]
     return user_past_letter
 
@@ -84,12 +70,14 @@ def programm_past_letter(chat_id, bot_answer):
     return bot_past_letter: последняя буква в городе бота 
     """
     bot_past_letter = bot_answer[-1]
-    if bot_past_letter == "Ы" or bot_past_letter == "Й" or bot_past_letter == "Ь":
+    if bot_past_letter in ("Ы", "Й", "Ь"):
         bot_past_letter = bot_answer[-2]
-        if bot_past_letter == "Ы" or bot_past_letter == "Й" or bot_past_letter == "Ь":
+        if bot_past_letter in ("Ы", "Й", "Ь"):
             bot_past_letter = bot_answer[-3]
-    with shelve.open("shelve_players_letters") as storage:
-        storage[str(chat_id)] = bot_past_letter
+    with shelve.open("shelve_players") as storage:
+        db_shelve = storage[str(chat_id)]
+        db_shelve.update({"bot_past_letter": bot_past_letter})
+        storage[str(chat_id)] = db_shelve
     return bot_past_letter
 
 
@@ -100,13 +88,11 @@ def programm_answer(chat_id, user_past_letter):
     param user_past_letter: последняя буква города пользователя
     return: город программы
     """
-    bot_answer = ""
     with shelve.open("shelve_players") as storage:
-        user_list = storage[str(chat_id)]
-        for bot_answer_for_cycle in user_list:
+        db_shelve = storage[str(chat_id)]
+        for bot_answer_for_cycle in db_shelve["city_dictionary"]:
             if bot_answer_for_cycle[0] == user_past_letter:
-                user_list.remove(bot_answer_for_cycle)
-                storage[str(chat_id)] = user_list
+                db_shelve["city_dictionary"].remove(bot_answer_for_cycle)
+                storage[str(chat_id)] = db_shelve
                 bot_answer = bot_answer_for_cycle
                 return bot_answer
-    return bot_answer

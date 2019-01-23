@@ -5,5 +5,3 @@ PROXY = {
 # настройки прокси
 
 API_KEY = "539198846:AAH1LYODa8PGq-OEoRVJNpiPk4IxPxxvdik"
-
-bot_past_letter = ""
