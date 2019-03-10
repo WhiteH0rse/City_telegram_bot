@@ -1,3 +1,3 @@
 import yaml
 
-RUSSIAN_CITY_LIST = yaml.load(open("cities.yaml", "r", encoding="utf-8"))
+RUSSIAN_CITY_LIST = yaml.load(open("cities.yml", "r", encoding="utf-8"))
