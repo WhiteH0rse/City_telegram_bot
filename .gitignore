@@ -104,3 +104,7 @@ venv.bak/
 .mypy_cache/
 
 settings.py
+
+shelve_players
+
+.vscode/

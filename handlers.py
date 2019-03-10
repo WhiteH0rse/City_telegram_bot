@@ -1,8 +1,9 @@
+import yaml
 from telegram import ReplyKeyboardMarkup
 from random import sample
 
 import utils
-import cities_base
+import cities
 
 
 def new_game(bot, update):
@@ -12,7 +13,7 @@ def new_game(bot, update):
     """
     chat_id = update.message.chat_id
     text = """Поехали!"""
-    RUSSIAN_CITY_LIST = sample(cities_base.RUSSIAN_CITY_LIST, 1097)
+    RUSSIAN_CITY_LIST = sample(cities.RUSSIAN_CITY_LIST, 1097)
     start_keyboard = ReplyKeyboardMarkup([["Начать новую игру"]], resize_keyboard=True)
     update.message.reply_text(text, reply_markup=start_keyboard)
     try:
